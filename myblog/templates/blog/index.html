@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+	Hello
+{% endblock %}
+
+{% block content %}
+
+	<div class="container">
+	<header class="blog-header py-3">
+    <div class="row flex-nowrap justify-content-between align-items-center">
+      <div class="col-4 pt-1">
+		      <img src="{% static 'blog\img\benyamin.jpg' %}" alt="profile" class="img-thumbnail rounded-circle" width="100" height="100">
+      </div>
+      <div class="col-4 text-center">
+        <h2 class="text-dark">Benyamin's Blog</h2>
+      </div>
+        <div class="col-4 d-flex justify-content-end align-items-center">
+          <a class="m-1 btn btn btn-secondary " href="{% url 'index' %}">Home</a>
+          <a class="m-1 btn btn-secondary" href="{% url 'posts' %}">Posts</a>
+          <a class="m-1 btn btn-secondary" href="{% url 'read_later' %}">Stored Posts</a>
+        </div>
+    </div>
+  </header>
+		<div class="row justify-content-center " style="margin-top:7%;">
+			{% for post in posts %}
+			<div class="col-md-4 mt-2">
+					<div class="card">
+						<img src="{{post.image_name.url}}" class="rounded h-100 w-100" alt="{{post.title}}">
+						<div class="card-text p-1 text-primary">{{ post.title }}</div>
+						<div class="card-body">{{post.excert}}</div>
+						<div class="card-footer">
+							<a href="{% url 'post_detail' post.slug %}" class="btn btn-primary">Read More</a>
+							<span class="ml-4">{{post.date|date:"D Y M"}}</span>
+						</div>				
+					</div>
+			</div>
+			{% endfor %}	
+		</div>
+	</div>
+
+{% endblock %}

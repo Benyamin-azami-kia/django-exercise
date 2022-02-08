@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+	Hello
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .form-ctrl input,
+    .form-ctrl textarea{
+        width: 100%;
+        display: block;
+        margin-bottom: 10px;
+        font:inherit;
+        border-radius: 5px;
+        border: 1px solid silver;
+        padding: 5px;
+    }
+    .errorlist{
+        color: red;
+        margin:5px 0;
+        list-style: none;
+        padding: 0;
+    }
+</style>
+
+<div class="container">
+	{% include 'blog/includes/header.html'%}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jumbotron">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3 class=" display-4">{{identified_post.title}}</h3>
+                        <small><a href="mailto:{{post.author.email}}" style="text-decoration: none;">{{identified_post.author}}</a></small><br>
+                        <small class="text-primary">{{identified_post.date|date:"D Y M"}}</small><br>
+                        <small>Tags:
+                            {% for tag in post_tag %}
+                                <span class="badge badge-pill badge-info">{{tag}}</span>
+                            {% endfor %}
+                        </small>
+                        <form action="{% url 'read_later' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="post_id" value="{{identified_post.id}}">
+                            {% if saved_for_later %}
+                                <button class="btn ml-3 btn-sm btn-outline-primary mt-2">Saved!</button>
+                            {% else %}
+                                <button class="btn ml-3 btn-sm btn-outline-primary mt-2">Read Later</button>
+                            {% endif %}
+                            
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="{{identified_post.image_name.url}}" class="rounded" width="180" height="120" style="float: right;" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+		<div class="row justify-content-center">
+			<div class="col-md-12 mt-2">
+				<div class="card mb-4">
+					<div class="card-body">
+                        <p>
+                            {{identified_post.content|linebreaks}}
+                        </p>
+                    </div>			
+				</div>	
+			</div>
+            <div class="col-md-7 order-2 mt-4 mt-3 mb-2">
+                <div class="card mt-2">
+                    <div class="card-header">Comments</div>
+                        <div class="card-body">
+                            {% for comment in identified_post.comments.all|dictsortreversed:"id" %}
+                                <h5>{{comment.name}}</h5>
+                                <p>{{comment.text}}</p>
+                                <hr>
+                            {% endfor %}
+                        </div>
+                </div>
+            </div>       
+            <div class="col-md-7 order-2 mt-4 mt-3 mb-2">
+                <div class="card">
+                    <div class="card-header">Send Comment</div>
+                    <div class="card-body">
+                        <form  action='{% url "post_detail" identified_post.slug %}' method="post">
+                            {% csrf_token %}
+                                {% for field in form %}
+                                    <div id='comment' class="form-ctrl mt-2">
+                                        {{field.label}}
+                                        {{field}}
+                                        {{field.errors}}
+                                    </div>
+                                {% endfor %}
+                            <div class="form-group">
+                                <button class="btn btn-warning">Send</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>	
+		</div>
+	</div>
+
+{% endblock %}
